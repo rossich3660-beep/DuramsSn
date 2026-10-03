@@ -372,26 +372,14 @@ void DuramsEditor::changeListenerCallback (juce::ChangeBroadcaster*)
 
 void DuramsEditor::buildBackground()
 {
+    // Keep editor construction lightweight and avoid image convolution during host UI creation.
     bg = juce::Image (juce::Image::ARGB, kW, kH, true);
-    {
-        juce::Graphics g (bg);
-        g.fillAll (juce::Colour (0xff05060a));
-        // A generated dark background keeps the editor self-contained when no artwork is bundled.
-        juce::ColourGradient base (juce::Colour (0xff101725), 0.0f, 0.0f,
-                                   juce::Colour (0xff05060a), (float) kW, (float) kH, false);
-        g.setGradientFill (base);
-        g.fillAll();
-        g.setColour (juce::Colours::black.withAlpha (0.22f));
-        g.fillAll();
-    }
-
-    // blurred copy used as the "frosted glass" backdrop (computed once, at 1/4 resolution)
-    auto small = bg.rescaled (kW / 4, kH / 4, juce::Graphics::mediumResamplingQuality);
-    juce::Image blurred (juce::Image::ARGB, small.getWidth(), small.getHeight(), true);
-    juce::ImageConvolutionKernel kernel (9);
-    kernel.createGaussianBlur (4.0f);
-    kernel.applyToImage (blurred, small, blurred.getBounds());
-    blurBg = blurred.rescaled (kW, kH, juce::Graphics::highResamplingQuality);
+    juce::Graphics g (bg);
+    juce::ColourGradient base (juce::Colour (0xff101725), 0.0f, 0.0f,
+                               juce::Colour (0xff05060a), (float) kW, (float) kH, false);
+    g.setGradientFill (base);
+    g.fillAll();
+    blurBg = juce::Image();
 }
 
 void DuramsEditor::paint (juce::Graphics& g)
