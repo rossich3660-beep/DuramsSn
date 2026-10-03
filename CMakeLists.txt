@@ -37,13 +37,11 @@ juce_add_plugin(DuramsSn
     VST3_CATEGORIES Instrument Drum
     AU_MAIN_TYPE kAudioUnitType_MusicDevice)
 
-juce_add_binary_data(DuramsAssets SOURCES Resources/background.jpg)
-
 target_sources(DuramsSn PRIVATE
-    Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp)
+    PluginProcessor.cpp
+    PluginEditor.cpp)
 
-target_include_directories(DuramsSn PRIVATE Source)
+target_include_directories(DuramsSn PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(DuramsSn PUBLIC
     JUCE_WEB_BROWSER=0
@@ -54,7 +52,6 @@ target_compile_definitions(DuramsSn PUBLIC
 
 target_link_libraries(DuramsSn
     PRIVATE
-        DuramsAssets
         juce::juce_audio_utils
         juce::juce_audio_formats
     PUBLIC
