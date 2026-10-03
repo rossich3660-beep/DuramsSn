@@ -1,5 +1,4 @@
 #include "PluginEditor.h"
-#include <BinaryData.h>
 
 namespace
 {
@@ -373,18 +372,15 @@ void DuramsEditor::changeListenerCallback (juce::ChangeBroadcaster*)
 
 void DuramsEditor::buildBackground()
 {
-    const auto src = juce::ImageCache::getFromMemory (BinaryData::background_jpg, BinaryData::background_jpgSize);
-
     bg = juce::Image (juce::Image::ARGB, kW, kH, true);
     {
         juce::Graphics g (bg);
         g.fillAll (juce::Colour (0xff05060a));
-        if (src.isValid())
-        {
-            const float sc = juce::jmax ((float) kW / (float) src.getWidth(), (float) kH / (float) src.getHeight());
-            const float w = (float) src.getWidth() * sc, h = (float) src.getHeight() * sc;
-            g.drawImage (src, (kW - w) * 0.5f, (kH - h) * 0.5f, w, h, 0, 0, src.getWidth(), src.getHeight());
-        }
+        // A generated dark background keeps the editor self-contained when no artwork is bundled.
+        juce::ColourGradient base (juce::Colour (0xff101725), 0.0f, 0.0f,
+                                   juce::Colour (0xff05060a), (float) kW, (float) kH, false);
+        g.setGradientFill (base);
+        g.fillAll();
         g.setColour (juce::Colours::black.withAlpha (0.22f));
         g.fillAll();
     }
